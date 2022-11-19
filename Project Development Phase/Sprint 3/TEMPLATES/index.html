@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/CSS/index.css">
+    <title>Liver Disease Predictor</title>
+    <script>
+        function Predict()
+        {
+            document.getElementById('positive').hidden = true;
+            document.getElementById('negative').hidden = true;
+            var age = document.forms["ipdata"]["age"].value;
+            var gender = document.forms["ipdata"]["gender"].value;
+            var tb = document.forms["ipdata"]["tb"].value;
+            var db = document.forms["ipdata"]["db"].value;
+            var ap = document.forms["ipdata"]["ap"].value;
+            var aa = document.forms["ipdata"]["aa"].value;
+            var asa = document.forms["ipdata"]["asa"].value;
+            var a = document.forms["ipdata"]["a"].value;
+            var tp = document.forms["ipdata"]["tp"].value;
+            var agr = document.forms["ipdata"]["agr"].value;
+            document.getElementById('reset').click();
+            
+            fetch('http://127.0.0.1:5000/?age='+age)
+            .then( response => response.json() )
+            .then( data => {
+                console.log(data.result);
+                if(parseInt(data.result)>50)
+                {
+                    document.getElementById('neg_data').innerHTML = "Probability of Liver Failure is "+ data.result +"%<br/>\"There is a Possiblity that you are having Liver Disease.\"";
+                    document.getElementById('negative').hidden = false;
+                }
+                else
+                {
+                    document.getElementById('pos_data').innerHTML = "Probability of Liver Failure is "+ data.result +"%<br/>\"There is a Very Less Possiblity that you are have Liver Disease. Stay Healthy\"";
+                    document.getElementById('positive').hidden = false;
+                }
+                
+            })
+            .catch( error => console.log(error) )
+        }
+    </script>
+</head>
+<body>
+    <h2 id="h">Liver Disease Prediction</h2>
+    <div id="positive" hidden><h4 id="pos_data">Positive</h4></div>
+    <div id="negative" hidden><h4 id="neg_data">Negative</h4></div>
+    <table>
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+        <tr>
+            <td>Age</td>
+            <td><input name="age" type="number" min="0" placeholder="Age" required></td>
+        </tr>
+        <tr>
+            <td>Gender</td>
+            <td><input name="gender" type="radio" value=1 required>&nbsp;Male&ensp;&ensp;<input id="gender" name="gender" type="radio" value=0>&nbsp;Female</td>
+        </tr>
+        <tr>
+            <td>Total Bilirubin</td>
+            <td><input name="tb" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td>Alkaline Phosphotase</td>
+            <td><input name="ap" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td>Alamine Aminotransferase (SGPT)</td>
+            <td><input name="aa" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td>Aspartate Aminotransferase (SGOT)</td>
+            <td><input name="asa" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td>Total Proteins</td>
+            <td><input name="tp" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td>Albumin</td>
+            <td><input name="a" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td>A/G Ratio</td>
+            <td><input name="agr" type="number" min="0" step="0.01" placeholder="" required></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td id="btn"><div id="btndiv"><input id="submit" type="submit" value="Predict"></div>&emsp;<div id="btndiv"><input id="reset" type="reset" value="Clear"></div></td>
+        </tr>
+        
+        </form>
+    </table>
+</body>
+</html>
